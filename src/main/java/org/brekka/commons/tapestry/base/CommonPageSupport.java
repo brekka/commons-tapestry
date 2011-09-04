@@ -2,6 +2,10 @@ package org.brekka.commons.tapestry.base;
 
 import static java.lang.String.format;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -35,6 +39,21 @@ public abstract class CommonPageSupport {
         Messages messages = resources.getMessages();
         String autoTitleKey = format("Page.%s.title", getClass().getSimpleName());
         return formatTitle(autoTitleKey, messages);
+    }
+    
+    public String getPageIdentifier() {
+        String pageName = StringUtils.capitalize(resources.getPageName().replaceAll("/", ""));
+        String pageIdentifier = formatPageIdentifier(pageName);
+        try {
+            pageIdentifier = URLEncoder.encode(pageIdentifier, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+        return pageIdentifier;
+    }
+    
+    protected String formatPageIdentifier(String pageName) {
+        return pageName;
     }
     
     /**
