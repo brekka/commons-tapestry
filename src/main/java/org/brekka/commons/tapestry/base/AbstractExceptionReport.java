@@ -3,7 +3,7 @@ package org.brekka.commons.tapestry.base;
 import org.brekka.commons.lang.ErrorCode;
 import org.brekka.commons.lang.ErrorCode.Utils;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Property;

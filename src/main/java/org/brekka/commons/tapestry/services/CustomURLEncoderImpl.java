@@ -5,7 +5,7 @@ import static org.brekka.commons.tapestry.CommonsTapestryErrorCode.CT602;
 
 import java.util.BitSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.internal.services.URLEncoderImpl;
 import org.apache.tapestry5.services.URLEncoder;
 import org.brekka.commons.tapestry.CommonsTapestryException;
