@@ -57,9 +57,8 @@ public class Fielding {
     void beginRender(MarkupWriter writer) throws Exception {
         toRender = resources.getBody();
         
-        writer.element("div", "class", "bkc-fielding");
+        writer.element("div", "class", "control-group");
         
-        writer.element("div", "class", "bkc-label");
         field = extractField();
         
         decorator.beforeField(field);
@@ -68,7 +67,7 @@ public class Fielding {
                 && label == null) {
             // No label
         } else {
-            labelElement = writer.element("label");
+            labelElement = writer.element("label", "class", "control-label");
             
             if (field != null) {
                  updateLabelAttributes();
@@ -82,9 +81,8 @@ public class Fielding {
             writer.end();
         }
         
-        writer.end();
         
-        writer.element("div", "class", "bkc-value");
+        writer.element("div", "class", "controls");
     }
     
     /**
@@ -110,11 +108,9 @@ public class Fielding {
                 ComponentPageElementImpl cpei = (ComponentPageElementImpl) renderCommand;
                 Component component = cpei.getComponent();
                 if (component instanceof Field) {
-                    if (field != null) {
-                        // Too many fields, can use fielding.
-                        throw new IllegalStateException("More than one field found in this fielding");
-                    }
+                    // Choose the first field for association with the label
                     field = (Field) component;
+                    break;
                 }
             }
         }
