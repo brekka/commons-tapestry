@@ -25,16 +25,6 @@
 			<version>${tapestry-release-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-spring</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-upload</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring-release-version}</version>
@@ -59,6 +49,12 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.1</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>2.0</version>
+            <optional>true</optional>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
