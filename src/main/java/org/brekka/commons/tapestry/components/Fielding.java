@@ -126,10 +126,6 @@ public class Fielding {
 
     void afterRenderBody(MarkupWriter writer) {
         writer.end();
-        
-        writer.element("div", "class", "clear");
-        writer.write("");
-        writer.end();
         writer.end();
     }
 }

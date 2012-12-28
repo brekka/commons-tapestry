@@ -20,14 +20,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Response;
 
@@ -42,6 +44,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
  *
  * @author Andrew Taylor (andrew@brekka.org)
  */
+@SupportsInformalParameters
 public class QrCode {
 
     @Parameter(required=true)
@@ -56,7 +59,12 @@ public class QrCode {
     void beginRender(MarkupWriter writer) throws Exception {
         String base64urlSafeString = Base64.encodeBase64URLSafeString(url.getBytes("UTF-8"));
         Link link = componentResources.createEventLink("action", base64urlSafeString, size);
-        writer.element("img", "src", link.toURI(), "alt", "QR Code");
+        Element img = writer.element("img", "src", link.toURI(), "alt", "QR Code");
+        List<String> informalParameterNames = componentResources.getInformalParameterNames();
+        for (String param : informalParameterNames) {
+            String value = componentResources.getInformalParameter(param, String.class);
+            img.attribute(param, value);
+        }
         writer.end();
     }
     
