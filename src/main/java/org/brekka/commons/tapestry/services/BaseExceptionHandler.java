@@ -17,6 +17,7 @@ import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.OperationException;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.ComponentEventException;
 import org.apache.tapestry5.services.ExceptionReporter;
@@ -183,10 +184,16 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
      * @return
      */
     protected ErrorResponseType determineResponse(String requestPath, Throwable exception) {
-        ErrorResponseType errorResponseType= ErrorResponseType.SYSTEM_ERROR;
-        if (exception instanceof CommonsTapestryException) {
-        	CommonsTapestryException serviceException = (CommonsTapestryException) exception;
-            if (BAD_URL_CODES.contains(serviceException.getErrorCode())) {
+        if (exception instanceof OperationException) {
+            exception = exception.getCause();
+        }
+        ErrorResponseType errorResponseType = ErrorResponseType.SYSTEM_ERROR;
+        CommonsTapestryException commonsTapestryException = findCommonsTapestryException(exception);
+        if (commonsTapestryException != null) {
+            ErrorCode errorCode = commonsTapestryException.getErrorCode();
+        	if (errorCode == CommonsTapestryErrorCode.CT404) {
+        	    errorResponseType = ErrorResponseType.NOT_FOUND;
+        	} else if (BAD_URL_CODES.contains(errorCode)) {
                 /*
                  * Bad encoding of request URL based on old links picked up by
                  * the GoogleBot. Just return a 404.
@@ -219,7 +226,7 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
         }
         return errorResponseType;
     }
-    
+
     protected void logSystemError(Throwable exception) {
         String referer = requestGlobals.getRequest().getHeader("Referer");
         String userAgent = requestGlobals.getRequest().getHeader("User-Agent");
@@ -284,6 +291,21 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
             username = userPrincipal.getName();
         }
         return username;
+    }
+    
+    
+    /**
+     * @param exception
+     * @return
+     */
+    private static CommonsTapestryException findCommonsTapestryException(Throwable exception) {
+        while (exception != null) {
+            if (exception instanceof CommonsTapestryException) {
+                return (CommonsTapestryException) exception;
+            }
+            exception = exception.getCause();
+        }
+        return null;
     }
     
     /**
