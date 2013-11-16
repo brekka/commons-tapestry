@@ -2,6 +2,7 @@ package org.brekka.commons.tapestry.base;
 
 import org.brekka.commons.lang.ErrorCode;
 import org.brekka.commons.lang.ErrorCode.Utils;
+import org.brekka.commons.tapestry.error.ErrorCodeReceiver;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.tapestry5.ComponentResources;
@@ -13,7 +14,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.Request;
 
-public abstract class AbstractExceptionReport extends CommonPageSupport implements ExceptionReporter {
+public abstract class AbstractExceptionReport extends CommonPageSupport implements ExceptionReporter, ErrorCodeReceiver {
     
     @Inject
     private ComponentResources resources;

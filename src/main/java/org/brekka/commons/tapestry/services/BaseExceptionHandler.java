@@ -29,6 +29,7 @@ import org.brekka.commons.lang.ErrorCoded;
 import org.brekka.commons.tapestry.CommonsTapestryErrorCode;
 import org.brekka.commons.tapestry.CommonsTapestryException;
 import org.brekka.commons.tapestry.base.AbstractExceptionReport;
+import org.brekka.commons.tapestry.error.ErrorCodeReceiver;
 import org.slf4j.Logger;
 
 /**
@@ -116,11 +117,15 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
                 responseCode = HttpServletResponse.SC_NOT_FOUND;
                 page = prepareNotFoundPage(exception, pageCache);
                 break;
+            case SERVICE_UNAVAILABLE:
+                responseCode = HttpServletResponse.SC_SERVICE_UNAVAILABLE;
+                page = prepareErrorPage(exception, pageCache);
+                break;
             case SYSTEM_ERROR:
                 responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
                 logSystemError(exception);
                 response.setHeader("X-Tapestry-ErrorMessage", InternalUtils.toMessage(exception));
-                page = prepareSystemErrorPage(exception, pageCache);
+                page = prepareErrorPage(exception, pageCache);
                 break;
         }
         
@@ -137,15 +142,15 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
      * @param pageCache
      * @return
      */
-    protected Page prepareSystemErrorPage(Throwable exception, RequestPageCache pageCache) {
+    protected Page prepareErrorPage(Throwable exception, RequestPageCache pageCache) {
         Page page = pageCache.get(pageName);
         // Let the page set up for the new exception (standard Tapestry functionality).
         ExceptionReporter rootComponent = (ExceptionReporter) page.getRootComponent();
         rootComponent.reportException(exception);
         
-        // Attempt to identify and set the error code on the page if available.
-        if (rootComponent instanceof AbstractExceptionReport) {
-            AbstractExceptionReport exceptionReport = (AbstractExceptionReport) rootComponent;
+        // Attempt to identify and set the error code on  the page if available.
+        if (rootComponent instanceof ErrorCodeReceiver) {
+            ErrorCodeReceiver exceptionReport = (ErrorCodeReceiver) rootComponent;
             ErrorCode ec = identifyErrorCode(exception);
             exceptionReport.initErrorCode(ec);
         }
@@ -160,7 +165,7 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
      * @return
      */
     protected Page prepareNotFoundPage(Throwable exception, RequestPageCache pageCache) {
-        return prepareSystemErrorPage(exception, pageCache);
+        return prepareErrorPage(exception, pageCache);
     }
     
     /**
@@ -171,7 +176,7 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
      * @return
      */
     protected Page prepareAccessDeniedPage(Throwable exception, RequestPageCache pageCache) {
-        return prepareSystemErrorPage(exception, pageCache);
+        return prepareErrorPage(exception, pageCache);
     }
     
     /**
@@ -317,6 +322,10 @@ public class BaseExceptionHandler implements RequestExceptionHandler {
          * Return a system error page with response code 500.
          */
         SYSTEM_ERROR,
+        /**
+         * Service is currently unavailable.
+         */
+        SERVICE_UNAVAILABLE,
         /**
          * Returns a page not found with reponse code 404.
          */
