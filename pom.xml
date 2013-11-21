@@ -114,11 +114,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     
+
     <distributionManagement>
         <repository>
-            <id>brekka</id>
-            <name>brekka-releases</name>
-            <url>http://maven.brekka.co.uk/artifactory/libs-release-local</url>
+            <id>brekka.org</id>
+            <url>https://brekka.org/maven/content/repositories/releases</url>
         </repository>
+        <snapshotRepository>
+            <id>brekka.org</id>
+            <url>https://brekka.org/maven/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
